@@ -1,0 +1,52 @@
+<div id="unsubscribe-box" style="text-align: center; margin: 2rem 0">
+  <p><strong>💔 Hủy nhận thông báo bài viết mới qua email:</strong></p>
+  <div style="display: inline-flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+    <input type="email" id="unsubscribeInput" placeholder="Nhập email để hủy" required
+      style="padding: 0.5rem; width: 300px; border-radius: 4px; border: 1px solid #ccc;" />
+    <button onclick="unsubscribeEmail()" style="padding: 0.5rem 1rem; background-color: #d9534f; color: white; border: none; border-radius: 4px; cursor: pointer;">
+      Hủy đăng ký
+    </button>
+  </div>
+  <p id="unsubscribeMsg" style="margin-top: 1rem; color: green;"></p>
+</div>
+
+<script>
+  function isValidEmail(email) {
+    // Regex kiểm tra định dạng email
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  function unsubscribeEmail() {
+    const email = document.getElementById("unsubscribeInput").value.trim();
+    const msg = document.getElementById("unsubscribeMsg");
+
+    if (!email) {
+      msg.textContent = "Vui lòng nhập email.";
+      msg.style.color = "red";
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      msg.textContent = "Địa chỉ email không hợp lệ.";
+      msg.style.color = "red";
+      return;
+    }
+
+    fetch("https://script.google.com/macros/s/AKfycbxVis-ZfJvsl_WFwXLNdFpgldVGp55166-qF6tT-c2ZTkOziWwh81y95B8AZBMskQqAUg/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `email=${encodeURIComponent(email)}&action=unsubscribe`
+    })
+    .then(() => {
+      msg.textContent = "✅ Hủy đăng ký thành công!";
+      msg.style.color = "green";
+      document.getElementById("unsubscribeInput").value = "";
+    })
+    .catch(() => {
+      msg.textContent = "❌ Lỗi khi xử lý.";
+      msg.style.color = "red";
+    });
+  }
+</script>
